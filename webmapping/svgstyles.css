@@ -1,0 +1,10 @@
+/* Styles to enable yellow hovering of fields and finds */
+
+.field:hover{
+	fill: yellow;
+}
+
+.find:hover{
+	fill: yellow;
+}
+
