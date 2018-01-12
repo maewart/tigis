@@ -1,5 +1,4 @@
-# tigis
-TIGIS webmapping project
+# TIGIS webmapping project
 
 This is the complete code for the Edinburgh university webmapping project
 
