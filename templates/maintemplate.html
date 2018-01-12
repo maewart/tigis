@@ -1,0 +1,518 @@
+Content-Type: text/html
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Fields & Finds Mapping Service</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    
+    <!-- Styles for Fields and Finds -->
+    <link rel="stylesheet" href="https://www.geos.ed.ac.uk/~s1783947/webmapping/svgstyles.css">
+    <link rel="stylesheet" href="https://www.geos.ed.ac.uk/~s1783947/webmapping/pagestyles.css">
+    
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <!-- Load Support for Javascript datepicker -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
+    <!-- Enable Mobile Support -->
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- control Script for sending information to python code -->
+    <script language="JavaScript" type="text/javascript">
+      
+      <!-- Web address. Change if move website -->
+      webAddress = "https://www.geos.ed.ac.uk/~s1783947/cgi-bin/webmapping/main.py?"
+      
+      <!-- Current area name provided by python script to allow knowing which map currently viewed -->
+      curAreaName = "{{jsMapAreaName}}"
+      
+      <!-- functions for consuming form data and sending to python -->
+      
+      function AddArea(form) {
+        area = form.areaName.value;
+        maxX = form.maxX.value;
+        maxY = form.maxY.value;
+        imgPath = form.imagePath.value;
+        url = webAddress + "Action=AddArea&MapArea=" + area + "&MaxX=" + maxX + "&MaxY=" + maxY + "&ImgPath=" + imgPath + "&OldArea=" + curAreaName;
+        updatePage(url);
+      }
+      function AddField(form) {
+        lowX = form.lowX.value;
+        hiX = form.hiX.value;
+        lowY = form.lowY.value;
+        hiY = form.hiY.value;
+        owner = form.fieldOwner.value;
+        crop = form.fieldCrop.value;
+        url = webAddress + "Action=AddField&MapArea=" + curAreaName + "&LowX=" + lowX + "&HiX=" + hiX + "&LowY=" + lowY + "&HiY=" + hiY + "&Owner=" + owner + "&Crop=" + crop;
+        updatePage(url);
+      }
+      function AddFind(form) {
+        x = form.x.value;
+        y = form.y.value;
+        findType = form.findType.value;
+        depth = form.findDepth.value;
+        notes = form.findNotes.value;
+        imgPath = form.imagePath.value;
+        url = webAddress + "Action=AddFind&MapArea=" + curAreaName + "&X=" + x + "&Y=" + y + "&Type=" + findType + "&Depth=" + depth + "&Notes=" + notes + "&ImgPath=" + imgPath;
+        updatePage(url);
+      }
+      function AddFindClass(form) {
+        findName = form.findName.value;
+        period = form.period.value;
+        use = form.use.value;
+        colour = form.colour.value.toString().substr(1);
+        url = webAddress + "Action=AddFindClass&MapArea=" + curAreaName + "&ClassName=" + findName + "&Period=" + period + "&Use=" + use + "&Colour=" + colour;
+        updatePage(url);
+      }
+      function AddCrop(form) {
+        cropName = form.cropName.value;
+        start = form.startDate.value;
+        end = form.endDate.value;
+        imgPath = form.imagePath.value;
+        url = webAddress + "Action=AddCrop&MapArea=" + curAreaName + "&CropName=" + cropName + "&Start=" + start + "&End=" + end + "&ImgPath=" + imgPath;
+        updatePage(url);
+      }
+      function AddOwner(form) {
+        ownerName = form.ownerName.value;
+        imgPath = form.imagePath.value;
+        url = webAddress + "Action=AddOwner&MapArea=" + curAreaName + "&OwnerName=" + ownerName + "&ImgPath=" + imgPath;
+        updatePage(url);
+      }
+      function DelFind(form) {
+        id = form.id.value;
+        url = webAddress + "Action=DelFind&MapArea=" + curAreaName + "&Id=" +id;
+        updatePage(url);
+      }
+      function DelField(form) {
+        id = form.id.value;
+        url = webAddress + "Action=DelField&MapArea=" + curAreaName + "&Id=" +id;
+        updatePage(url);
+      }
+      function DelArea(form) {
+        name = form.name.value;
+        url = webAddress + "Action=DelArea&MapArea=" + curAreaName + "&DelArea=" + name;
+        updatePage(url);
+      }
+      function ApplyFilter(form) {
+        findType = form.findType.value;
+        url = webAddress + "MapArea=" + curAreaName + "&FilterClass=" + findType;
+        updatePage(url);
+      }
+      function RemoveFilter(form) {
+        findType = form.findType.value;
+        url = webAddress + "MapArea=" + curAreaName;
+        updatePage(url);
+      }
+      function updatePage(url){
+        window.open(url,"_self");
+      }
+      <!-- Date picker box for the Crop start and end dates -->
+      $( function() {
+        $( "#startDate" ).datepicker({dateFormat: "yy-mm-dd"});
+      } );
+      $( function() {
+        $( "#endDate" ).datepicker({dateFormat: "yy-mm-dd"});
+      } );
+    </script>
+    
+  </head>
+  <body>
+  
+    <!-- Create top header bar -->
+    <div class="container-fluid headbar">
+      <div class="row">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-5">
+        <h2 class="text-primary">fields & finds <small>mapping service</small></h2>
+        </div>
+        <div class="col-sm-5">
+          <h5><p class="text-right"><button type="button" class="btn btn-info" data-toggle="modal" data-target="#instructions">Instructions</button>&nbsp;&nbsp;&nbsp;
+          <small>Contact s1783947@sms.ed.ac.uk if any issues</small>
+          </p></h5>
+        </div>
+        <div class="col-sm-1">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main section -->
+    <div class="container-fluid">
+      <div class="row content">
+      
+        <!-- Empty grey column -->
+        <div class="col-md-1 sidenav" height="100%">
+        </div>
+        
+        <!-- Action section -->
+        <!-- This section is quite long due to all the forms created -->
+        <!-- Search for "main SVG map section" (approx line 440) to see where SVG map goes -->
+        <div class="col-md-2" >
+          <br>{{status}}
+          <ul class="nav nav-pills nav-stacked">
+          <!-- Apply Filter -->
+          <li><a href="#" data-toggle="collapse" data-target="#filterFind">Apply Filter</a>
+            <div id="filterFind" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="form-group">
+                    <label for="findType" class="text-primary">Class</label>
+                    <select class="form-control" id="findType">
+                      {{classList}}
+                    </select>
+                    <small class="form-text text-muted">This will mean only finds of this class are displayed<br>Filter will be removed when any actions are performed</small>
+                  </div>
+                  <input type="button" class="btn btn-default" value="Apply" onClick="ApplyFilter(this.form)">&nbsp;&nbsp;&nbsp;
+                  <input type="button" class="btn btn-default" value="Remove Filter" onClick="RemoveFilter(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          
+          <!-- Create New Map -->
+          <li><a href="#" data-toggle="collapse" data-target="#newMap">Create New Map</a>
+            <div id="newMap" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="form-group">
+                    <label for="areaName" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter the name of your Map Area">New Area Name</label>
+                    <input type="text" class="form-control" id="areaName" data-toggle="tooltip" data-placement="top" title="Enter the name of your Map Area">
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="maxX" class="text-primary" data-toggle="tooltip" data-placement="top" title="Field Size must be between 10 and 50">Max X
+                          <small class="form-text text-muted"> (10 to 50)</small>
+                        </label>
+                        <input type="number" class="form-control" min="10" max="50" step="1" data-toggle="tooltip" data-placement="top" title="Field Size must be between 10 and 50" id="maxX">
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="maxY" class="text-primary" data-toggle="tooltip" data-placement="top" title="Field Size must be between 10 and 50">Max Y
+                          <small class="form-text text-muted"> (10 to 50)</small>
+                        </label>
+                        <input type="number" min="10" max="50" step="1" class="form-control" data-toggle="tooltip" data-placement="top" title="Field Size must be between 10 and 50" id="maxY">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="imagePath" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter a full http path to image">Http path to background image</label>
+                    <input type="url" class="form-control" id="imagePath" data-toggle="tooltip" data-placement="top" title="Enter a full http path to image. e.g. https://www.geos.ed.ac.uk/~s1783947/ex/field.jpg">
+                    <small class="form-text text-muted">Must be an accessible online link e.g.<br>https://www.geos.ed.ac.uk/~s1783947/ex/field.jpg<br>Can be left blank</small>
+                  </div>
+                  <input type="button" class="btn btn-default" value="Create" onClick="AddArea(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          
+          <!-- Add Field -->
+          <li><a href="#" data-toggle="collapse" data-target="#addField">Add Field</a>
+            <div id="addField" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="lowX" class="text-primary" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50">Low X
+                          <small class="form-text text-muted"> (0 to {{maxXl1}})</small>
+                        </label>
+                        <input type="number" class="form-control" min="0" max="{{maxXl1}}" step="1" maxlength="2" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50" id="lowX">
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="hiX" class="text-primary" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50">High X
+                          <small class="form-text text-muted"> (1 to {{maxX}})</small>
+                        </label>
+                        <input type="number" class="form-control" min="1" max="{{maxX}}" step="1" maxlength="2" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50" id="hiX">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="lowY" class="text-primary" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50">Low Y
+                          <small class="form-text text-muted"> (0 to {{maxYl1}})</small>
+                        </label>
+                        <input type="number" class="form-control" min="0" max="{{maxYl1}}" step="1" maxlength="2" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50" id="lowY">
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="hiY" class="text-primary" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50">High Y
+                          <small class="form-text text-muted"> (1 to {{maxY}})</small>
+                        </label>
+                        <input type="number" class="form-control" min="1" max="{{maxY}}" step="1" maxlength="2" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50" id="hiY">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="fieldOwner" class="text-primary">Owner</label>
+                    <select class="form-control" id="fieldOwner">
+                      {{ownerList}}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="fieldCrop" class="text-primary">Crop</label>
+                    <select class="form-control" id="fieldCrop">
+                      {{cropList}}
+                    </select>
+                  </div>
+                  <input type="button" class="btn btn-default" value="Submit" onClick="AddField(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          
+          <!-- Add Find -->
+          <li><a href="#" data-toggle="collapse" data-target="#addFind">Add Find</a>
+            <div id="addFind" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="x" class="text-primary" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50">X
+                          <small class="form-text text-muted"> (0 to {{maxX}})</small>
+                        </label>
+                        <input type="number" class="form-control" min="0" max="{{maxX}}" step="1" maxlength="2" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50" id="x">
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="y" class="text-primary" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50">Y
+                          <small class="form-text text-muted"> (0 to {{maxY}})</small>
+                        </label>
+                        <input type="number" class="form-control" min="0" max="{{maxY}}" step="1" maxlength="2" data-toggle="tooltip" data-placement="top" title="Coordinates must be between 0 and 50" id="y">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="findDepth" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter the depth of the find in metres (2 decimal places)">Depth
+                      <small class="form-text text-muted"> (metres - 0 to 20)</small>
+                    </label>
+                    <input type="number" class="form-control" min="0" max="20" id="findDepth" data-toggle="tooltip" data-placement="top" title="Enter the depth of the find in metres (2 decimal places)">
+                  </div>
+                  <div class="form-group">
+                    <label for="findType" class="text-primary">Type</label>
+                    <select class="form-control" id="findType">
+                      {{classList}}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="findNotes" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter brief notes">Notes</label>
+                    <textarea class="form-control" rows="2" maxlength="50" id="findNotes"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="imagePath" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter a full http path to image">Http path to object image</label>
+                    <input type="url" class="form-control" id="imagePath" data-toggle="tooltip" data-placement="top" title="Enter a full http path to image. e.g. https://www.geos.ed.ac.uk/~s1783947/ex/bone.jpg">
+                    <small class="form-text text-muted">Must be an accessible online link e.g.<br>https://www.geos.ed.ac.uk/~s1783947/ex/bone.jpg<br>Can be left blank</small>
+                  </div>
+                  <input type="button" class="btn btn-default" value="Submit" onClick="AddFind(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          
+          <!-- Add Find Class -->
+          <li><a href="#" data-toggle="collapse" data-target="#addFindClass">Add Find Class</a>
+            <div id="addFindClass" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="form-group">
+                    <label for="findName" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter class name">Class Name</label>
+                    <input type="text" class="form-control" maxlength="20" id="findName" data-toggle="tooltip" data-placement="top" title="Enter class name">
+                  </div>
+                  <div class="form-group">
+                    <label for="period" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter period">Period</label>
+                    <input type="text" class="form-control" maxlength="20" id="period" data-toggle="tooltip" data-placement="top" title="Enter period">
+                  </div>
+                  <div class="form-group">
+                    <label for="use" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter use">Use</label>
+                    <input type="text" class="form-control" maxlength="20" id="use" data-toggle="tooltip" data-placement="top" title="Enter use">
+                  </div>
+                  <div class="form-group">
+                    <label for="colour" class="text-primary" data-toggle="tooltip" data-placement="top" title="Select display colour">Display Colour</label><br>
+                    <input type="color" id="colour" data-toggle="tooltip" data-placement="top" title="Select display colour" name="color" value="#ff66ff">
+                  </div>
+                  <input type="button" class="btn btn-default" value="Submit" onClick="AddFindClass(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          
+          <!-- Add Crop -->
+          <li><a href="#" data-toggle="collapse" data-target="#addCrop">Add Crop</a>
+            <div id="addCrop" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="form-group">
+                    <label for="cropName" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter class name">Crop Name</label>
+                    <input type="text" class="form-control" maxlength="20" id="cropName" data-toggle="tooltip" data-placement="top" title="Enter class name">
+                  </div>
+                  <div class="form-group">
+                    <label for="start" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter date">Season Start</label>
+                    <input id="startDate" class="form-control" type="text" format="yyyy-mm-dd">
+                  </div>
+                  <div class="form-group">
+                    <label for="end" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter date">Season End</label>
+                    <input id="endDate" class="form-control" type="text"  format="yyyy-mm-dd">
+                  </div>
+                  <div class="form-group">
+                    <label for="imagePath" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter a full http path to image">Http path to crop image</label>
+                    <input type="url" class="form-control" id="imagePath" data-toggle="tooltip" data-placement="top" title="Enter a full http path to image. e.g. https://www.geos.ed.ac.uk/~s1783947/ex/peas.jpg">
+                    <small class="form-text text-muted">Must be an accessible online link e.g.<br>https://www.geos.ed.ac.uk/~s1783947/ex/peas.jpg<br>Can be left blank</small>
+                  </div>
+                  <input type="button" class="btn btn-default" value="Submit" onClick="AddCrop(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          
+          <!-- Add Owner -->
+          <li><a href="#" data-toggle="collapse" data-target="#addOwner">Add Owner</a>
+            <div id="addOwner" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="form-group">
+                    <label for="ownerName" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter class name">Name</label>
+                    <input type="text" class="form-control" maxlength="20" id="ownerName" data-toggle="tooltip" data-placement="top" title="Enter Owner name">
+                  </div>
+                  <div class="form-group">
+                    <label for="imagePath" class="text-primary" data-toggle="tooltip" data-placement="top" title="Enter a full http path to image">Http path to owner image</label>
+                    <input type="url" class="form-control" id="imagePath" data-toggle="tooltip" data-placement="top" title="Enter a full http path to image. e.g. https://www.geos.ed.ac.uk/~s1783947/ex/bart.jpg">
+                    <small class="form-text text-muted">Must be an accessible online link e.g.<br>https://www.geos.ed.ac.uk/~s1783947/ex/bart.jpg<br>Can be left blank</small>
+                  </div>
+                  <input type="button" class="btn btn-default" value="Submit" onClick="AddOwner(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          
+          <!-- Delete Map -->
+          <li><a href="#" data-toggle="collapse" data-target="#delArea">Delete Map</a>
+            <div id="delArea" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="form-group">
+                    <label for="name" class="text-primary">Map</label>
+                    <select class="form-control" id="name">
+                      {{delAreaList}}
+                    </select>
+                    <small class="form-text text-muted">Cannot remove default or demo maps</small>
+                  </div>
+                  <input type="button" class="btn btn-default" value="Delete" onClick="DelArea(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          
+          <!-- Delete Field -->
+          <li><a href="#" data-toggle="collapse" data-target="#delField">Delete Field</a>
+            <div id="delField" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="form-group">
+                    <label for="id" class="text-primary">Field Id</label>
+                    <select class="form-control" id="id">
+                      {{fieldList}}
+                    </select>
+                    <small class="form-text text-muted">Cannot remove the original 8 fields</small>
+                  </div>
+                  <input type="button" class="btn btn-default" value="Delete" onClick="DelField(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          
+          <!-- Delete Find -->
+          <li><a href="#" data-toggle="collapse" data-target="#delFind">Delete Find</a>
+            <div id="delFind" class="collapse">
+              <p>
+                <form action="" method="post">
+                  <div class="form-group">
+                    <label for="id" class="text-primary">Find Id</label>
+                    <select class="form-control" id="id">
+                      {{findList}}
+                    </select>
+                    <small class="form-text text-muted">Cannot remove the original 8 finds</small>
+                  </div>
+                  <input type="button" class="btn btn-default" value="Delete" onClick="DelFind(this.form)">
+                </form>
+              </p>
+            </div>
+          </li>
+          </ul>
+        </div>
+        
+        <!-- main SVG map section -->
+        <div class="col-md-5" >
+          <p>
+          <div class="btn-group" align="right">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            Current: {{currentMap}} <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu">
+              {{mapAreas}}
+            </ul>
+          </div>
+          <div class="well">
+            {{svgMap}}
+          </div>
+        </div>
+        
+        <!-- Instruction panel section -->
+        <div class="col-md-3" >
+          <br>
+          {{svgInfo}}
+        </div>
+          <div class="col-md-1 sidenav" height="100%">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Instructions -->
+      <div class="modal fade" id="instructions" role="dialog">
+      <div class="modal-dialog">
+        <!-- Content-->
+        <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Fields & Finds Instructions</h4>
+        </div>
+        <div class="modal-body">
+          <p>This is an interactive mapping service for the fields and finds database.</p>
+          <strong>Original fields and finds map</strong>
+          <p>You can see the original fields and finds database by selecting default on the dropdown above the map. Note that a field or find may have been added to this. However the original 8 fields and finds will always remain as they cannot be removed.</p>
+          <strong>Hover information</strong>
+          <p>Information about fields and finds can be seen on the right when you hover over the field or find.</p>
+          <strong>Create you own map, fields and finds !!!!!</strong>
+          <p>On the left hand panel you can perform actions. You can create your own map including a custom background image and add fields and finds. In addition owners, crops and find classes can be added and will then be available to select when creating a field or find. You can even control the colour of your new find classes.</p>
+          <strong>Automated checks</strong>
+          <p>Fields and finds are checked when added. Fields are checked so they don't intersect existing fields and all fields and finds must be within the map boundary. At the moment a map cannot be greater than 50 tall or wide.</p>
+          <strong>Deleting items</strong>
+          <p>You can only delete items for the map area you are currently viewing. Don't worry, you can't delete anything you shouldn't and all original 8 fields and finds cannot be deleted.</p>
+          <strong>Adding images</strong>
+          <p>The fields and finds database only stores http paths to images. For all images you need to provide a full path such as:<br>https://www.geos.ed.ac.uk/~s1783947/ex/peas.jpg</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        
+      </div>
+      </div>
+  </body>
+</html>
